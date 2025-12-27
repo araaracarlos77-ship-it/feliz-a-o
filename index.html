@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carta Especial</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- AUDIO PARA LA CARTA -->
+    <audio id="letterMusic">
+        <source src="mus.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Notificación inicial -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <div class="notification-icon">✉️</div>
+            <div class="notification-text">
+                <p class="notification-title">Tienes un nuevo mensaje</p>
+                <p class="notification-subtitle">Revisa tu carta especial</p>
+            </div>
+            <div class="notification-close">&times;</div>
+        </div>
+    </div>
+
+    <!-- Carta animada -->
+    <div class="letter-container">
+        <div class="letter-image" id="letterContainer">
+            <div class="animated-mail">
+                <div class="back-fold"></div>
+                <div class="letter">
+                    <div class="letter-border"></div>
+                    <div class="letter-title"></div>
+                    <div class="letter-context"></div>
+                    <div class="letter-stamp">
+                        <div class="letter-stamp-inner"></div>
+                    </div>
+                </div>
+                <div class="top-fold"></div>
+                <div class="body"></div>
+                <div class="left-fold"></div>
+            </div>
+            <div class="shadow"></div>
+        </div>
+        <div class="instruction-text"></div>
+    </div>
+
+    <!-- Modal de la carta abierta -->
+    <div id="letterModal" class="modal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <div class="letter-paper" id="letterPaper">
+                <div class="letter-header">
+                    <h1 id="letterTitle">Carta Especial</h1>
+                    <div class="letter-date" id="letterDate">1 de Enero, 2026</div>
+                </div>
+                <div class="letter-body" id="letterBody">
+                    <p class="greeting" id="greeting"></p>
+                    <p id="paragraph1"></p>
+                    <p id="paragraph2"></p>
+                    <p id="paragraph3"></p>
+                    <p id="paragraph4"></p>
+                    <p class="signature" id="signature1"></p>
+                    <p class="signature-name" id="signature2"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje final -->
+    <div id="loveMessage" class="love-message">
+        <p id="loveText"></p>
+    </div>
+
+ <script>
+    // Textos de la carta
+    const letterTexts = {
+        greeting: "Hola,",
+        paragraph1: "Quise tomarme un🍷 momento para desearte un muy ✨feliz Año Nuevo. Aunque el tiempo y la vida a veces nos van🎆 llevando por caminos🍷 distintos, quería que supieras que este mensaje nace con buenos deseos.",
+        paragraph2: "Hay personas que🎆, ✨dejan huella en tus pensamientos o recuerdos,chistes en ciertos momentos de este año 2025. Este nuevo comienzo me hizo pensar en desearte cosas buenas, sin más intención que eso.",
+        paragraph3: "Que el 2026 te regale tranquilidad, salud y motivos para sonreír. Que cada día encuentres razones para seguir adelante y sentirte en paz contigo misma.",
+        paragraph4: "No escribo para remover el pasado, solo para cerrar el año con✨ respeto y empezar el siguiente con buenos deseos. Que🎆 sea un año ligero, amable y lleno de oportunidades para ti.",
+        signature1: "Con buenos deseos,",
+        signature2: "C....s"
+    };
+
+        const loveMessageText = "Feliz año nuevo 🎆";
+
+        function typeText(element, text, speed = 30) {
+            return new Promise((resolve) => {
+                element.textContent = '';
+                let i = 0;
+                const timer = setInterval(() => {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                    } else {
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }, speed);
+            });
+        }
+
+        async function showLetterWithTyping() {
+
+            // ⭐ REPRODUCIR MÚSICA AL ABRIR LA CARTA ⭐
+            const music = document.getElementById('letterMusic');
+            music.currentTime = 0;
+            music.play().catch(() => {
+                console.log("El navegador bloqueó la reproducción automática.");
+            });
+
+            const modal = document.getElementById('letterModal');
+            const letterPaper = document.getElementById('letterPaper');
+
+            modal.style.display = 'block';
+            modal.classList.add('modal-show');
+
+            setTimeout(() => {
+                letterPaper.classList.add('letter-entrance');
+            }, 100);
+
+            setTimeout(async () => {
+                await typeText(document.getElementById('greeting'), letterTexts.greeting, 40);
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                await typeText(document.getElementById('paragraph1'), letterTexts.paragraph1, 25);
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                await typeText(document.getElementById('paragraph2'), letterTexts.paragraph2, 25);
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                await typeText(document.getElementById('paragraph3'), letterTexts.paragraph3, 25);
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                await typeText(document.getElementById('paragraph4'), letterTexts.paragraph4, 25);
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                await typeText(document.getElementById('signature1'), letterTexts.signature1, 35);
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                await typeText(document.getElementById('signature2'), letterTexts.signature2, 35);
+            }, 800);
+        }
+
+        function closeLetter() {
+
+            // ⭐ DETENER MÚSICA AL CERRAR ⭐
+            const music = document.getElementById('letterMusic');
+            music.pause();
+
+            const modal = document.getElementById('letterModal');
+            const letterPaper = document.getElementById('letterPaper');
+            const loveMessage = document.getElementById('loveMessage');
+
+            letterPaper.classList.add('letter-exit');
+
+            setTimeout(() => {
+                modal.classList.remove('modal-show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    letterPaper.classList.remove('letter-entrance', 'letter-exit');
+
+                    Object.keys(letterTexts).forEach(key => {
+                        const element = document.getElementById(key);
+                        if (element) element.textContent = '';
+                    });
+
+                    loveMessage.classList.add('show');
+                    typeText(document.getElementById('loveText'), loveMessageText, 100);
+
+                    setTimeout(() => {
+                        loveMessage.classList.remove('show');
+                    }, 4000);
+                }, 300);
+            }, 500);
+        }
+
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('notification').classList.add('show');
+                setTimeout(() => {
+                    document.getElementById('notification').classList.remove('show');
+                }, 5000);
+            }, 1000);
+        });
+
+        document.querySelector('.notification-close').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('notification').classList.remove('show');
+        });
+
+        document.getElementById('letterContainer').addEventListener('click', function() {
+            document.getElementById('notification').classList.remove('show');
+            showLetterWithTyping();
+        });
+
+        document.getElementById('closeModal').addEventListener('click', closeLetter);
+        document.getElementById('modalOverlay').addEventListener('click', closeLetter);
+    </script>
+</body>
+</html>
